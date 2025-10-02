@@ -16,7 +16,7 @@ function getProducts() {
       description: 'Professional camera, solid build',
     },
     {
-      id: 'fd105551-0f0d-4a9f-bc41-c559c8a17258',
+      id: '5046785e-15ec-46d3-8740-ef3e702eb53e',
       name: 'Canon R',
       price: 3000,
       description: 'Professional camera, we technology',
@@ -40,21 +40,38 @@ function getOrders() {
   return [
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17260',
-      client: 'John Doe',
-      address: '123 Main Street, London',
+      clientId: 'adbe078a-8b47-458e-8589-1bd5e4d05a80',
       productId: 'fd105551-0f0d-4a9f-bc41-c559c8a17256',
     },
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17261',
-      client: 'Jane Doe',
-      address: '123 Main Street, London',
-      productId: 'fd105551-0f0d-4a9f-bc41-c559c8a17256',
+      clientId: '347eaa04-4233-4524-a331-eb578dcfa7ea',
+      productId: 'fd105551-0f0d-4a9f-bc41-c559c8a17259',
     },
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17262',
-      client: 'Thomas Jefferson',
-      address: 'Baker Street 12B, New York',
+      clientId: 'cfac3e73-7d41-4e0c-b763-44f2c1851983',
       productId: '01c7599d-318b-4b9f-baf7-51f3a936a2d4',
+    },
+  ];
+}
+
+function getClients() {
+  return [
+    {
+      id: 'adbe078a-8b47-458e-8589-1bd5e4d05a80',
+      name: 'John Doe',
+      address: '123 Main Street, London',
+    },
+    {
+      id: '347eaa04-4233-4524-a331-eb578dcfa7ea',
+      name: 'Jane Doe',
+      address: '123 Main Street, London',
+    },
+    {
+      id: 'cfac3e73-7d41-4e0c-b763-44f2c1851983',
+      name: 'Thomas Jefferson',
+      address: 'Baker Street 12B, New York',
     },
   ];
 }
@@ -65,19 +82,30 @@ async function seed() {
       return db.product.create({ data: product });
     }),
   );
+  
+  await Promise.all(
+    getClients().map((client) => {
+      return db.client.create({ data: client });
+    }),
+  );
 
   await Promise.all(
-    getOrders().map(({ productId, ...orderData }) => {
+    getOrders().map(({ productId, clientId, ...orderData }) => {
       return db.order.create({
         data: {
           ...orderData,
           product: {
             connect: { id: productId },
           },
+          client: {
+            connect: { id: clientId },
+          },
         },
       });
     }),
   );
+
+
 }
 
 seed();
